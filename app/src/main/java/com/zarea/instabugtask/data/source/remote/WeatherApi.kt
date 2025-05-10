@@ -1,5 +1,6 @@
 package com.zarea.instabugtask.data.source.remote
 
+import com.zarea.instabugtask.BuildConfig
 import com.zarea.instabugtask.data.dto.ForecastResponse
 import com.zarea.instabugtask.data.dto.WeatherResponse
 import com.zarea.instabugtask.domain.exception.ServerIsBusyException
@@ -12,7 +13,7 @@ import java.net.URL
 class WeatherApi {
     private val BASE_URL =
         "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/"
-    private val API_KEY = "NNWEBVJWPRTVJK8SZWR6LNVWT"
+    private val API_KEY = BuildConfig.API_KEY
 
     fun getCurrentWeather(location: Location): WeatherResponse {
         val url =
