@@ -10,24 +10,24 @@ data class ForecastResponse(
     val address: String,
     val timezone: String,
     val tzoffset: Double,
-    val days: List<DayDto>
+    val days: List<DayResponse>
 ) {
     companion object {
         fun fromJson(json: String): ForecastResponse {
             val jsonObject = JSONObject(json)
             
-            val days = mutableListOf<DayDto>()
+            val days = mutableListOf<DayResponse>()
             val daysArray = jsonObject.getJSONArray("days")
             
             val maxDays = daysArray.length().coerceAtMost(5)
             for (dayIndex in 0 until maxDays) {
                 val dayObject = daysArray.getJSONObject(dayIndex)
-                val hours = mutableListOf<HourDto>()
+                val hours = mutableListOf<HourResponse>()
                 val hoursArray = dayObject.getJSONArray("hours")
                 
                 for (hourIndex in 0 until hoursArray.length()) {
                     val hourObject = hoursArray.getJSONObject(hourIndex)
-                    hours.add(HourDto(
+                    hours.add(HourResponse(
                         datetime = hourObject.getString("datetime"),
                         temp = hourObject.getDouble("temp"),
                         humidity = hourObject.getDouble("humidity"),
@@ -37,7 +37,7 @@ data class ForecastResponse(
                     ))
                 }
                 
-                days.add(DayDto(
+                days.add(DayResponse(
                     datetime = dayObject.getString("datetime"),
                     tempmax = dayObject.getDouble("tempmax"),
                     tempmin = dayObject.getDouble("tempmin"),

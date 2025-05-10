@@ -10,24 +10,24 @@ data class WeatherResponse(
     val address: String,
     val timezone: String,
     val tzoffset: Double,
-    val days: List<DayDto>
+    val days: List<DayResponse>
 ) {
     companion object {
         fun fromJson(json: String): WeatherResponse {
             val jsonObject = JSONObject(json)
             
-            val days = mutableListOf<DayDto>()
+            val days = mutableListOf<DayResponse>()
             val daysArray = jsonObject.getJSONArray("days")
             
             // Get the first day for current weather
             if (daysArray.length() > 0) {
                 val dayObject = daysArray.getJSONObject(0)
-                val hours = mutableListOf<HourDto>()
+                val hours = mutableListOf<HourResponse>()
                 val hoursArray = dayObject.getJSONArray("hours")
                 
                 for (i in 0 until hoursArray.length()) {
                     val hourObject = hoursArray.getJSONObject(i)
-                    hours.add(HourDto(
+                    hours.add(HourResponse(
                         datetime = hourObject.getString("datetime"),
                         temp = hourObject.getDouble("temp"),
                         humidity = hourObject.getDouble("humidity"),
@@ -37,7 +37,7 @@ data class WeatherResponse(
                     ))
                 }
                 
-                days.add(DayDto(
+                days.add(DayResponse(
                     datetime = dayObject.getString("datetime"),
                     tempmax = dayObject.getDouble("tempmax"),
                     tempmin = dayObject.getDouble("tempmin"),
