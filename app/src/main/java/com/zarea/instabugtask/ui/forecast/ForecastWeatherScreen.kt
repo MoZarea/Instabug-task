@@ -26,8 +26,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,7 +46,7 @@ fun ForecastWeatherScreen(
     onRequestLocationPermission: () -> Unit,
     onRequestEnableLocation: () -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.observeAsState(ForecastState())
 
     Scaffold(
         topBar = {
@@ -85,6 +85,7 @@ fun ForecastWeatherScreen(
                     .weight(1f)
                     .fillMaxWidth()
             ) {
+
                 when {
                     state.isLoading -> LoadingView()
                     state.error != null -> ErrorView(state.error!!, onRetry = viewModel::loadWeather)

@@ -1,23 +1,19 @@
 package com.zarea.instabugtask.ui.currentweather
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.zarea.instabugtask.domain.exception.LocationPermissionNotGranted
-import com.zarea.instabugtask.domain.exception.LocationServiceNotEnabled
-import com.zarea.instabugtask.domain.exception.NoInternetConnectionAndNoCachedDataAvailable
-import com.zarea.instabugtask.domain.exception.ServerIsBusyException
+import com.zarea.instabugtask.domain.exception.*
 import com.zarea.instabugtask.domain.model.Weather
 import com.zarea.instabugtask.domain.usecase.GetCurrentWeatherUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
 class CurrentWeatherViewModel(
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(CurrentWeatherUiState())
-    val state = _state.asStateFlow()
+    private val _state = MutableLiveData(CurrentWeatherUiState())
+    val state: LiveData<CurrentWeatherUiState> = _state
 
     init {
         Log.d("CurrentWeatherViewModel", "init")
@@ -25,45 +21,25 @@ class CurrentWeatherViewModel(
     }
 
     fun loadWeather() {
-        _state.update {
-            it.copy(isLoading = true, error = null)
-        }
+        _state.value = _state.value?.copy(isLoading = true, error = null)
 
         getCurrentWeatherUseCase.execute(object : GetCurrentWeatherUseCase.Callback {
             override fun onResult(result: Result<Weather>) {
                 result.fold(
-                    onSuccess = {weather ->
+                    onSuccess = { weather ->
                         Log.d("CurrentWeatherViewModel", "onResult: $weather")
-                        _state.update {
-                            it.copy(weather = weather, isLoading = false)
-                        }
+                        _state.postValue(_state.value?.copy(weather = weather, isLoading = false))
                     },
-                    onFailure = {error ->
-                        when(error){
+                    onFailure = { error ->
+                        when (error) {
                             is LocationPermissionNotGranted -> {
-                                _state.update {
-                                    it.copy(locationPermissionRequired = true)
-                                }
+                                _state.postValue(_state.value?.copy(locationPermissionRequired = true))
                             }
                             is LocationServiceNotEnabled -> {
-                                _state.update {
-                                    it.copy(locationServiceEnabledRequired = true)
-                                }
-                            }
-                            is NoInternetConnectionAndNoCachedDataAvailable -> {
-                                _state.update {
-                                    it.copy(error = error.message, isLoading = false)
-                                }
-                            }
-                            is ServerIsBusyException -> {
-                                _state.update {
-                                    it.copy(error = error.message, isLoading = false)
-                                }
+                                _state.postValue(_state.value?.copy(locationServiceEnabledRequired = true))
                             }
                             else -> {
-                                _state.update {
-                                    it.copy(error = error.message, isLoading = false)
-                                }
+                                _state.postValue(_state.value?.copy(error = error.message, isLoading = false))
                             }
                         }
                     }
@@ -73,16 +49,10 @@ class CurrentWeatherViewModel(
     }
 
     fun resetPermissionState() {
-        _state.update {
-            it.copy(locationPermissionRequired = false)
-        }
+        _state.value = _state.value?.copy(locationPermissionRequired = false)
     }
 
     fun resetLocationServiceEnabledState() {
-        _state.update {
-            it.copy(locationServiceEnabledRequired = false)
-        }
+        _state.value = _state.value?.copy(locationServiceEnabledRequired = false)
     }
-
 }
-

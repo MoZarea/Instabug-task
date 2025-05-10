@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import com.zarea.instabugtask.ui.common.components.LoadingView
 import com.zarea.instabugtask.ui.common.components.LocationDisabledView
 import com.zarea.instabugtask.ui.common.components.PermissionRequiredView
 import com.zarea.instabugtask.ui.common.components.WeatherCard
+import com.zarea.instabugtask.ui.forecast.ForecastState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +49,7 @@ fun CurrentWeatherScreen(
     onRequestLocationPermission: () -> Unit,
     onRequestEnableLocation: () -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.observeAsState(CurrentWeatherUiState())
 
     Scaffold(
         topBar = {
