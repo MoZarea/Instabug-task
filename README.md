@@ -27,7 +27,7 @@
 ### Code Architecture:
 Mvvm
 <p align="left">
-  <img src="imges/Screenshot 2025-05-10 232018.png" height="400" width="350">
+  <img src="images/Screenshot 2025-05-10 232018.png" height="600" width="350">
 </p>
 
 
