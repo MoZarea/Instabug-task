@@ -33,10 +33,13 @@ class CurrentWeatherViewModel(
                     onFailure = { error ->
                         when (error) {
                             is LocationPermissionNotGranted -> {
-                                _state.postValue(_state.value?.copy(locationPermissionRequired = true))
+                                _state.postValue(_state.value?.copy(locationPermissionRequired = true, isLoading = false))
                             }
                             is LocationServiceNotEnabled -> {
                                 _state.postValue(_state.value?.copy(locationServiceEnabledRequired = true))
+                            }
+                            is ServerIsBusyException -> {
+                                _state.postValue(_state.value?.copy(error = error.message, isLoading = false))
                             }
                             else -> {
                                 _state.postValue(_state.value?.copy(error = error.message, isLoading = false))

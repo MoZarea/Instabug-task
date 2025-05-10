@@ -30,12 +30,11 @@ class ForecastViewModel(
                     onFailure = { error ->
                         when (error) {
                             is LocationPermissionNotGranted -> {
-                                _state.postValue(_state.value?.copy(locationPermissionRequired = true))
+                                _state.postValue(_state.value?.copy(locationPermissionRequired = true, isLoading = false))
                             }
                             is LocationServiceNotEnabled -> {
-                                _state.postValue(_state.value?.copy(locationServiceEnabledRequired = true))
+                                _state.postValue(_state.value?.copy(locationServiceEnabledRequired = true, isLoading = false))
                             }
-                            is NoInternetConnectionAndNoCachedDataAvailable,
                             is ServerIsBusyException -> {
                                 _state.postValue(_state.value?.copy(error = error.message, isLoading = false))
                             }
